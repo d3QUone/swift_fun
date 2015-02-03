@@ -116,6 +116,7 @@ func do_calc(input: String) -> String {
     var brackets: Int = 0
     var char: Character
     var queue = [String]()
+    // parse params
     while i < input_len {
         char = input[advance(input.startIndex, i)]
         // get func.... fuck it's too complex now
@@ -160,16 +161,78 @@ func do_calc(input: String) -> String {
             }
             
         }
-        
-        // ....
-        
+        else if char != " "{
+            // a
+        }
         i += 1
     }
+    // do calc here ....
+    
     return "\(out)"
 }
+
+
+func reverse_polish(input: String) -> String{
+    let input_len: Int = countElements(input)
+    var res = [String]()
+    var stack = [String]()
+    var out: Float = 0.0
+    
+    var i: Int = 0
+    var char: Character
+    var buf_str: String = ""
+    while i < input_len-1 {
+        char = input[advance(input.startIndex, i)]
+        if char != " " {
+            buf_str += String(char)
+            if input[advance(input.startIndex, i+1)] == " " {
+                if (buf_str == "+" || buf_str == "-" || buf_str == "*" || buf_str == "/" || buf_str == "(" || buf_str == ")") {
+                    stack.append(buf_str)
+                }
+                else {
+                    res.append(buf_str)
+                }
+                buf_str = ""
+            }
+        }
+        i += 1
+    }
+    println(res)
+    println(stack)
+    println("--------")
+    return "\(out)"
+}
+
+reverse_polish("11 + (3 + 4)/10 - 31 + 4*(2 - 3/4)")
+
+reverse_polish("11+(3+4)/10-31+4*(2-3/4)")
+
+var opers = ["+", "-", "*", "/", "(", ")"]
+var cont = contains(opers, "-")
+cont = contains(opers, "1")
+
+/*
+calc inside brakes or funcs. I need to find all 'levels' and build a tree of dependences
+-----
+v2
+do a separate method to eval only simple equals like (a+b)*c or even simpler
+then parse input-eqv and replace functions by results...
+
+
+-----
+v1
+a1 sign                                                             sign xn
+       \                                                        |
+        a2 sign                                             |
+               \                                        |
+                ...                         ..... x(n-1)
+                   \                       |
+                     an sign bn sign ... xn
 
 // run tests
 var math_input = create_test_cases(15)
 for test_case in math_input {
     println(do_calc(test_case))
 }
+
+*/
