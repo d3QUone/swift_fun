@@ -44,14 +44,8 @@ println(out)
 println("\nTrying to work with interpretering math equals")
 // creates random math equals
 func create_test_cases(amount: Int) -> [String]{
-    /*
-    let ava_Operators = ["(", ")", "+", "-", "*", "/"]
-    let ava_Consts = ["PI", "E"]
-    let ava_Funcs = ["cos", "sin", "exp"]
-    */
-    // fix smth to add more signs into expr
-
-    let available = [["cos", "sin", "exp"], ["+", "-", "*", "/", "(", ")"], ["PI", "E"], [""]]
+    //               |-- correct cases --|-------------- incorrect cases ----------------|
+    let available = [["cos", "sin", "exp", "ccs", "cosa", "sen", "sinn", "ex", "exponent"], ["+", "-", "*", "/", "(", ")"], ["PI", "E"], [""]]
     
     var res = [String]()
     for i in 0..<amount {
@@ -66,19 +60,19 @@ func create_test_cases(amount: Int) -> [String]{
             let item = available[group_num][item_num]
             var spaces: String = ""
             if j < len - 1 {
-                for sp in 0..<2 {
+                for sp in 0..<Int(arc4random_uniform(3)) {
                     spaces += " "
                 }
             }
-            
             if group_num == 0 {
                 // function chosen
                 s += item + spaces + "("
                 brackets -= 1
             }
             else if group_num == 1 {
-                // close bracket
-                if brackets < 0 && Int(arc4random_uniform(10)) - 5 < 0{
+                // operator chosen
+                if brackets < 0 {
+                    // close bracket
                     s += item + spaces + ") "
                     brackets += 1
                 }
@@ -87,7 +81,7 @@ func create_test_cases(amount: Int) -> [String]{
                 }
             }
             else {
-                // add sign
+                // add sign between nums
                 if sign < 0 {
                     sign += 1
                     s += available[1][Int(arc4random_uniform(4))]
@@ -107,19 +101,69 @@ func create_test_cases(amount: Int) -> [String]{
     return res
 }
 
-func do_calc(input: String) -> Float {
+
+func do_calc(input: String) -> String {
+    println("Got: \(input)")
+    let input_len: Int = countElements(input)
+    var i: Int = 0
     var out: Float = 0.0
-    // ???
     var brackets: Int = 0
-    
-    return out
+    var char: Character
+    var queue = [String]()
+    while i < input_len {
+        char = input[advance(input.startIndex, i)]
+        // get func.... fuck it's too complex now
+        // add checkup on additional symbols e.g: sinax
+        if char == "c" {
+            if input[advance(input.startIndex, i+1)] == "o" {
+                if input[advance(input.startIndex, i+2)] == "s"{
+                    queue.append("cos")
+                }
+                else {
+                    return "error: unknown constant"
+                }
+            }
+            else {
+                return "error: unknown constant"
+            }
+        }
+        else if char == "s" {
+            if input[advance(input.startIndex, i+1)] == "i" {
+                if input[advance(input.startIndex, i+2)] == "n"{
+                    queue.append("sin")
+                }
+                else {
+                    return "error: unknown constant"
+                }
+            }
+            else {
+                return "error: unknown constant"
+            }
+        }
+        else if char == "e" {
+            if input[advance(input.startIndex, i+1)] == "x" {
+                if input[advance(input.startIndex, i+2)] == "p"{
+                    queue.append("exp")
+                }
+                else {
+                    return "error: unknown constant"
+                }
+            }
+            else {
+                return "error: unknown constant"
+            }
+            
+        }
+        
+        // ....
+        
+        i += 1
+    }
+    return "\(out)"
 }
 
-// do tests...
+// run tests
 var math_input = create_test_cases(15)
-/*
 for test_case in math_input {
     println(do_calc(test_case))
 }
-*/
-
