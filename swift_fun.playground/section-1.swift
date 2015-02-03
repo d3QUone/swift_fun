@@ -25,7 +25,6 @@ func 🏫🏫🏫(😄: String, 🙊:[String]){
     }
     println("-------------------")
 }
-//let buf = "😊😰😒😳😁😭😂👿😇😾🙈👍👃👅💬"
 
 🏫🏫🏫("😃 and 😉", ["🐶", "🐺", "🐱"])
 🏫🏫🏫("😳", ["😾"])
@@ -41,10 +40,8 @@ for i in 1..<10 {
 }
 println(out)
 
-var x = [[1, 2], [2, 3, 5]]
 
 println("\nTrying to work with interpretering math equals")
-
 // creates random math equals
 func create_test_cases(amount: Int) -> [String]{
     /*
@@ -52,6 +49,8 @@ func create_test_cases(amount: Int) -> [String]{
     let ava_Consts = ["PI", "E"]
     let ava_Funcs = ["cos", "sin", "exp"]
     */
+    // fix smth to add more signs into expr
+
     let available = [["cos", "sin", "exp"], ["(", ")", "+", "-", "*", "/"], ["PI", "E"]]
     
     var res = [String]()
