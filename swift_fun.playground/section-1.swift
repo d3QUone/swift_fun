@@ -56,12 +56,12 @@ func create_test_cases(amount: Int) -> [String]{
     var res = [String]()
     for i in 0..<amount {
         var s = ""
+        var brackets: Int = 0
         let len: Int = Int(arc4random_uniform(10)+1)*2
         for j in 0..<len {
             let group_num: Int = Int(arc4random_uniform(3))
             let group_len: Int = countElements(available[group_num])
             let item_num: Int = Int(arc4random_uniform(UInt32(group_len)))
-            
             let item = available[group_num][item_num]
             var spaces: String = ""
             for sp in 0..<group_num {
@@ -70,10 +70,17 @@ func create_test_cases(amount: Int) -> [String]{
             
             if group_num == 0 {
                 s += item + spaces + "(" + spaces
+                brackets -= 1
             }
             else {
-                let num: String = String(arc4random_uniform(100))
-                s += item + spaces + num + " "
+                if brackets < 0 && Int(arc4random_uniform(10)) - 5 < 0{
+                    s += item + spaces + String(arc4random_uniform(100)) + ") "
+                    brackets += 1
+                }
+                else {
+                    s += item + spaces + String(arc4random_uniform(100)) + " "
+                }
+                
             }
         }
         res.append(s)
@@ -90,9 +97,10 @@ func do_calc(input: String) -> Float {
 }
 
 // do tests...
-var math_input = create_test_cases(10)
+var math_input = create_test_cases(15)
+/*
 for test_case in math_input {
     println(do_calc(test_case))
 }
-
+*/
 
