@@ -41,7 +41,7 @@ for i in 1..<10 {
 println(out)
 
 
-println("\nTrying to work with interpretering math equals")
+println("\nTrying to work with interpretering math equals\n")
 // creates random math equals
 func create_test_cases(amount: Int) -> [String]{
     //               |-- correct cases --|-------------- incorrect cases ----------------|
@@ -66,27 +66,33 @@ func create_test_cases(amount: Int) -> [String]{
             }
             if group_num == 0 {
                 // function chosen
+                if sign < 0 {
+                    // add sign between nums
+                    sign += 1
+                    s += available[1][Int(arc4random_uniform(4))]
+                }
                 s += item + spaces + "("
                 brackets -= 1
             }
             else if group_num == 1 {
                 // operator chosen
+                s += item + spaces
                 if brackets < 0 {
                     // close bracket
-                    s += item + spaces + ") "
                     brackets += 1
+                    s += ") "
                 }
                 else {
-                    s += item + spaces + " "
+                    s += " "
                 }
             }
             else {
-                // add sign between nums
+                // const or any numeral
                 if sign < 0 {
+                    // add sign between nums
                     sign += 1
                     s += available[1][Int(arc4random_uniform(4))]
                 }
-                // const or any numeral
                 if item == "" {
                     s += String(arc4random_uniform(100)) + spaces
                 }
