@@ -51,36 +51,55 @@ func create_test_cases(amount: Int) -> [String]{
     */
     // fix smth to add more signs into expr
 
-    let available = [["cos", "sin", "exp"], ["(", ")", "+", "-", "*", "/"], ["PI", "E"]]
+    let available = [["cos", "sin", "exp"], ["+", "-", "*", "/", "(", ")"], ["PI", "E"], [""]]
     
     var res = [String]()
     for i in 0..<amount {
         var s = ""
         var brackets: Int = 0
+        var sign: Int = 0
         let len: Int = Int(arc4random_uniform(10)+1)*2
         for j in 0..<len {
-            let group_num: Int = Int(arc4random_uniform(3))
+            let group_num: Int = Int(arc4random_uniform(4))
             let group_len: Int = countElements(available[group_num])
             let item_num: Int = Int(arc4random_uniform(UInt32(group_len)))
             let item = available[group_num][item_num]
             var spaces: String = ""
-            for sp in 0..<group_num {
-                spaces += " "
+            if j < len - 1 {
+                for sp in 0..<2 {
+                    spaces += " "
+                }
             }
             
             if group_num == 0 {
-                s += item + spaces + "(" + spaces
+                // function chosen
+                s += item + spaces + "("
                 brackets -= 1
             }
-            else {
+            else if group_num == 1 {
+                // close bracket
                 if brackets < 0 && Int(arc4random_uniform(10)) - 5 < 0{
-                    s += item + spaces + String(arc4random_uniform(100)) + ") "
+                    s += item + spaces + ") "
                     brackets += 1
                 }
                 else {
-                    s += item + spaces + String(arc4random_uniform(100)) + " "
+                    s += item + spaces + " "
                 }
-                
+            }
+            else {
+                // add sign
+                if sign < 0 {
+                    sign += 1
+                    s += available[1][Int(arc4random_uniform(4))]
+                }
+                // const or any numeral
+                if item == "" {
+                    s += String(arc4random_uniform(100)) + spaces
+                }
+                else {
+                    s += item + spaces
+                }
+                sign -= 1
             }
         }
         res.append(s)
