@@ -2,7 +2,7 @@
 # ---- UNIVERSAL TEST FUNCTION ----
 
 def test_stuff(name, function, cases):
-    print "Doing tests of", name
+    print "Doing tests of {0}...".format(name)
     for case in cases:
         # case[i] = [eq, ans]
         res = function(case[0])
@@ -15,14 +15,13 @@ def test_stuff(name, function, cases):
 
 # --- get power ---
 def operator_power(o):
-    op = {"*": 4, "/": 4, "+": 3, "-": 2}
+    op = {"/": 3, "*": 3, "-": 2, "+": 2}
     try:
         return op[o]
     except:
         return None
 
 
-# create RPN
 def polish(exp):
     exp = exp.replace(" ", "").split("")
     stack = []    
@@ -103,8 +102,7 @@ cases2 = [[["11", "3", "4", "+", "10", "/", "+", "31", "-", "4", "2", "3", "40",
     
 
 
-# ---------------------- new style -----------------------
-
+# -------- create RPN -------- 
 def creplace(simple_input):
     inp = simple_input # it definitly has no spaces
     print "input eval:", inp
@@ -112,9 +110,9 @@ def creplace(simple_input):
     stack = ""
     out = []
     append = out.append
-    i = 0
     operators = ["*", "/", "+", "-"]
     numerals = [".", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
+    i = 0
     while i < len(inp):
         item = inp[i]
         if item in numerals:
@@ -128,15 +126,15 @@ def creplace(simple_input):
             if len(stack) == 0: stack += item
             else:
                 try:
-                    a = int(operator_power(stack[0]))
+                    j = len(stack) - 1 #top-stack-index
+                    a = int(operator_power(stack[j]))
                     b = int(operator_power(item))
-                    if a > b:
-                        while a > b and len(stack) > 0:
-                            append(stack[0])
-                            stack = stack[1:]
-                            if len(stack) > 0: 
-                                a = int(operator_power(stack[0]))
-                                b = int(operator_power(item))                        
+                    if a >= b:
+                        print "pop stack({0}): {1}".format(j, stack[j])
+                        append(stack[j])
+                        stack = stack[:j] + stack[j+1:]
+                    else:
+                        print "push to stack({0}): {1}".format(j, item) 
                     stack += item
                 except Exception as e:
                     print "operator-exception:", e, "item:", item
@@ -144,14 +142,19 @@ def creplace(simple_input):
         else:
             return "error"
         i += 1
-    out += list(stack)
+    # add reversed stack to output
+    i = len(stack) - 1
+    print "len =", len(stack)
+    while i >= 0:
+        append(stack[i])
+        i -= 1
     print "out:", out
     return out
 
 
-cases3 = [["41+57", "98"], ["2*4", "8"], ["9+0-3", "6"], ["30-5/2+1", "28.5"], 
-         ["12/3+1", "5"], ["40/8+10/10-2", "4"]]
-print "Doing tests of CREPLACE"
+cases3 = [["41+57", "98"], ["2*4", "8"], ["9+0-3", "6"], ["2*3-1", "5"], ["12/3+1", "5"],
+          ["12+3*41-33", "102"], ["40/8+10/10-2", "4"], ["2*3*4-5*6", "-6"], ["30-5/2+1", "28.5"]]
+print "Doing tests of CREPLACE...."
 for case in cases3:
     buf = creplace(case[0])
     res = count(buf)
