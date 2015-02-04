@@ -1,6 +1,6 @@
+import math
 
-# ---- UNIVERSAL TEST FUNCTION ----
-
+# ---- test func ----
 def test_stuff(name, function, cases):
     print "Doing tests of {0}...".format(name)
     for case in cases:
@@ -15,58 +15,20 @@ def test_stuff(name, function, cases):
 
 # --- get power ---
 def operator_power(o):
-    op = {"/": 3, "*": 3, "-": 2, "+": 2}
+    op = {"^": 4, "/": 3, "*": 3, "-": 2, "+": 2}
     try:
         return op[o]
     except:
         return None
 
+operators = ["^", "*", "/", "+", "-"]
+functions = ["sin", "cos", "exp", "tan", "ln", "log"]
 
-def polish(exp):
-    exp = exp.replace(" ", "").split("")
-    stack = []    
-    s_append = stack.append
-    i = 0
-    operators = ["*", "/", "+", "-"]
-    numerals = [".", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
-    while len(exp) > 1:
-        char = exp[i]
-        if char in operators:
-            try:
-                a = float(exp[i-2])
-                b = float(exp[i-1])
-                if item == "*":
-                    res = a*b
-                elif item == "/":
-                    res = a/b
-                elif item == "+":
-                    res = a+b
-                elif item == "-":
-                    res = a-b
-                exp[i-2] = res
-                exp.pop(i-1)
-                exp.pop(i-1) #gap, cause no all moved to left...
-                print "i={0}: {1}".format(i, exp)
-                i = 0
-            except:
-                print "ex", item
-                return "Incorrect char"
-        #elif char not in ["(", ")"] and char in numerals:
-            # numeral
-            # ????
-    return res
+#def do_aryphmetics(char):
 
-
-cases1 = [["(11+(3+4)/10-31+4*(2-3/40))", ["11", "3", "4", "+", "10", "/", "+", "31", "-", "4", "2", "3", "40", "/", "-", "*", "+"]],
-         ["(1 +3*8- 10 -(-1)*5)", ["1", "3", "8", "*", "+", "10", "-", "5", "-1", "*", "-"]],
-         ["((8+2*5)/(1+3*2-4))", ["8", "2", "5", "*" "+", "1", "4", "2", "3", "*", "+", "-", "/"]]]
-#test_stuff("transforming into RPN", polish, cases1)
-
-
-# evaulate RPN - OK
+# --- evaulate RPN - OK ---
 def count(a_list):
     exp = list(a_list)
-    operators = ["*", "/", "+", "-"]
     i = 0
     while len(exp) > 1:
         item = exp[i]
@@ -74,7 +36,9 @@ def count(a_list):
             try:
                 a = float(exp[i-2])
                 b = float(exp[i-1])
-                if item == "*":
+                if item == "^":
+                    res = a**b
+                elif item == "*":
                     res = a*b
                 elif item == "/":
                     res = a/b
@@ -84,22 +48,35 @@ def count(a_list):
                     res = a-b
                 exp[i-2] = res
                 exp.pop(i-1)
-                exp.pop(i-1) #gap, cause no all items were moved to left...
-                #print "i={0}: {1}".format(i, exp)
+                exp.pop(i-1)
                 i = 0
             except:
                 print "ex", item
-                return "Incorrect char"
+                return "Incorrect operator"
+        elif item in functions:
+            try:
+                a = float(exp[i-1])
+                # calcs ...
+                res = "func-calc"
+                exp[i-1] = res
+                exp.pop(i)
+                i = 0
+            except:
+                print "ex", item
+                return "Incorrect function"
         else:
             i += 1
     return str(exp[0])
 
 
+cases1 = [["(11+(3+4)/10-31+4*(2-3/40))", ["11", "3", "4", "+", "10", "/", "+", "31", "-", "4", "2", "3", "40", "/", "-", "*", "+"]],
+         ["(1 +3*8- 10 -(-1)*5)", ["1", "3", "8", "*", "+", "10", "-", "5", "-1", "*", "-"]],
+         ["((8+2*5)/(1+3*2-4))", ["8", "2", "5", "*" "+", "1", "4", "2", "3", "*", "+", "-", "/"]]]
+
 cases2 = [[["11", "3", "4", "+", "10", "/", "+", "31", "-", "4", "2", "3", "40", "/", "-", "*", "+"], "-11.6"],
           [["1", "3", "8", "*", "+", "10", "-", "5", "-1", "*", "-"], "20"],
           [["8", "2", "5", "*", "+", "1", "4", "-", "2", "3", "*", "+", "/"], "6"]]
 #test_stuff("COUNT", count, cases2)
-    
 
 
 # -------- create RPN -------- 
@@ -110,7 +87,6 @@ def creplace(simple_input):
     stack = ""
     out = []
     append = out.append
-    operators = ["*", "/", "+", "-"]
     numerals = [".", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
     i = 0
     while i < len(inp):
@@ -154,7 +130,7 @@ def creplace(simple_input):
     return out
 
 
-cases3 = [["41+57", "98"], ["2*4", "8"], ["9+0-3", "6"], ["2*3-1", "5"], ["12/3+1", "5"],
+cases3 = [["4^2", "16"], ["41+57", "98"], ["2*4", "8"], ["9+0-3", "6"], ["2*3-1", "5"], ["12/3+1", "5"],
           ["12+3*41-33", "102"], ["40/8+10/10-2", "4"], ["2*3*4-5*6", "-6"], ["30-5/2+1", "28.5"]]
 print "Doing tests of CREPLACE...."
 for case in cases3:
