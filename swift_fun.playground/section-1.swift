@@ -199,19 +199,19 @@ func reverse_polish(input: String) -> [String]{
                     buf_str += String(char)
                 }
                 else {
-                    res.append(buf_str)
+                    res.append(buf_str + String(char))
                     buf_str = ""
                 }
             }
             else {
                 println("-EOL char: \(char)")
-                res.append(buf_str)
+                res.append(buf_str + String(char))
                 buf_str = ""
             }
         }
-        // just debug
-        if countElements(buf_str) > 0 {
-            println("Buf now: \(buf_str)")
+        else {
+            println("Incorrect char: \(char)")
+            return ["Incorrect char: \(char)", "\(countElements(res))", "\(countElements(stack))"]
         }
         i += 1
     }
@@ -221,8 +221,8 @@ func reverse_polish(input: String) -> [String]{
 }
 
 var res = [String]()
-var cases = [["11 + (3 + 4)/10 - 31 + 4*(2 - 3/4)", "9", "12", "_"],
-    ["11+(3+4)/10-31+4*(2-3/4)", "9", "12", "_"], ["1 +3*8- 10 -(-1)*5", "6", "8"]]
+var cases = [["115 + (3 + 41)/105 - 315 + 4*(2 - 3/4)", "9", "12", "_"],
+    ["11+(3+4)/10-31+4*(2-3/40)", "9", "12", "_"], ["1 +3*8- 10 -(-1)*5", "6", "8"]]
 for one_case in cases {
     res = reverse_polish(one_case[0])
     if res[1] == one_case[1] && res[2] == one_case[2] {
