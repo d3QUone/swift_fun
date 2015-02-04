@@ -126,15 +126,17 @@ def creplace(simple_input):
             if len(stack) == 0: stack += item
             else:
                 try:
-                    j = len(stack) - 1 #top-stack-index
-                    a = int(operator_power(stack[j]))
-                    b = int(operator_power(item))
-                    if a >= b:
-                        print "pop stack({0}): {1}".format(j, stack[j])
-                        append(stack[j])
-                        stack = stack[:j] + stack[j+1:]
-                    else:
-                        print "push to stack({0}): {1}".format(j, item) 
+                    # do it on the whole stack
+                    for t in range(len(stack)):
+                        j = len(stack) - 1 #top-stack-index
+                        a = int(operator_power(stack[j]))
+                        b = int(operator_power(item))
+                        if a >= b:
+                            print "pop stack({0}): {1}".format(j, stack[j])
+                            append(stack[j])
+                            stack = stack[:j] + stack[j+1:]
+                        else:
+                            print "push to stack({0}): {1}".format(j, item) 
                     stack += item
                 except Exception as e:
                     print "operator-exception:", e, "item:", item
