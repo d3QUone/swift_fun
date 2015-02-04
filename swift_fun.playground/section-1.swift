@@ -1,7 +1,9 @@
 import Darwin
+import Foundation
 import UIKit
-println("Working with functions\n")
 
+/*
+println("Working with functions\n")
 // creates a line of a given str
 func 🏫🏫🏫(😄: String, 🙊:[String]){
     var persons = countElements(😄)
@@ -39,9 +41,9 @@ for i in 1..<10 {
     out.append(j)
 }
 println(out)
+*/
 
-
-println("\nTrying to work with interpretering math equals\n")
+println("Trying to work with interpretering math equals\n")
 // creates random math equals
 func create_test_cases(amount: Int) -> [String]{
     //               |-- correct cases --|-------------- incorrect cases ----------------|
@@ -172,44 +174,81 @@ func do_calc(input: String) -> String {
 }
 
 
-func reverse_polish(input: String) -> String{
+func reverse_polish(input: String) -> [String]{
+    let operators = ["+", "-", "*", "/", "(", ")"]
+    let numerals = [".", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
     let input_len: Int = countElements(input)
     var res = [String]()
     var stack = [String]()
-    var out: Float = 0.0
     
     var i: Int = 0
     var char: Character
+    var next_char: String = ""
     var buf_str: String = ""
-    while i < input_len-1 {
+    while i < input_len {
         char = input[advance(input.startIndex, i)]
-        if char != " " {
-            buf_str += String(char)
-            if input[advance(input.startIndex, i+1)] == " " {
-                if (buf_str == "+" || buf_str == "-" || buf_str == "*" || buf_str == "/" || buf_str == "(" || buf_str == ")") {
-                    stack.append(buf_str)
+        if contains(operators, String(char)) {
+            stack.append(String(char))
+        }
+        else if contains(numerals, String(char)) {
+            
+        }
+        else {
+            if char != " " {
+                buf_str += String(char)
+                if i + 1 < input_len {
+                    next_char = String(input[advance(input.startIndex, i+1)])
+                    if (contains(operators, next_char) || next_char == " ") {
+                        if contains(operators, buf_str) {
+                            stack.append(buf_str)
+                        }
+                        else {
+                            res.append(buf_str)
+                        }
+                        buf_str = ""
+                    }
                 }
-                else {
-                    res.append(buf_str)
-                }
-                buf_str = ""
             }
         }
         i += 1
     }
     println(res)
     println(stack)
-    println("--------")
-    return "\(out)"
+    return ["not yet", "\(countElements(res))", "\(countElements(stack))"]
 }
 
-reverse_polish("11 + (3 + 4)/10 - 31 + 4*(2 - 3/4)")
+var res = [String]()
+var cases = [["11 + (3 + 4)/10 - 31 + 4*(2 - 3/4)", "9", "12", "_"],
+    ["11+(3+4)/10-31+4*(2-3/4)", "9", "12", "_"], ["1 +3*8- 10 -(-1)*5", "6", "8"]]
+for one_case in cases {
+    res = reverse_polish(one_case[0])
+    if res[1] == one_case[1] && res[2] == one_case[2] {
+        println("test \(one_case[0]) - OK")
+    }
+    else {
+        if res[1] != one_case[1] {
+            println("failed \(one_case) on res-size")
+        }
+        else if res[2] != one_case[2] {
+            println("failed \(one_case) on stack-size")
+        }
+    }
+}
+        
 
-reverse_polish("11+(3+4)/10-31+4*(2-3/4)")
-
-var opers = ["+", "-", "*", "/", "(", ")"]
+let opers = ["+", "-", "*", "/", "(", ")"]
 var cont = contains(opers, "-")
 cont = contains(opers, "1")
+
+/*
+println(_stdlib_getTypeName(13))
+println(13.self)
+println(13.dynamicType)
+println(_stdlib_getTypeName("13"))
+println("13".dynamicType)
+println(_stdlib_getTypeName("+"))
+println(_stdlib_getTypeName("sin"))
+*/
 
 /*
 calc inside brakes or funcs. I need to find all 'levels' and build a tree of dependences
@@ -217,7 +256,6 @@ calc inside brakes or funcs. I need to find all 'levels' and build a tree of dep
 v2
 do a separate method to eval only simple equals like (a+b)*c or even simpler
 then parse input-eqv and replace functions by results...
-
 
 -----
 v1
@@ -229,6 +267,7 @@ a1 sign                                                             sign xn
                    \                       |
                      an sign bn sign ... xn
 
+-----
 // run tests
 var math_input = create_test_cases(15)
 for test_case in math_input {
