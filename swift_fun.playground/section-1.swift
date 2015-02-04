@@ -177,38 +177,41 @@ func do_calc(input: String) -> String {
 func reverse_polish(input: String) -> [String]{
     let operators = ["+", "-", "*", "/", "(", ")"]
     let numerals = [".", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
-    let input_len: Int = countElements(input)
     var res = [String]()
     var stack = [String]()
-    
     var i: Int = 0
     var char: Character
     var next_char: String = ""
     var buf_str: String = ""
+    // remove all spaces on the first run
+    var input = input.stringByReplacingOccurrencesOfString(" ", withString: "", options: NSStringCompareOptions.LiteralSearch, range: nil)
+    let input_len: Int = countElements(input)
     while i < input_len {
         char = input[advance(input.startIndex, i)]
         if contains(operators, String(char)) {
             stack.append(String(char))
         }
         else if contains(numerals, String(char)) {
-            
-        }
-        else {
-            if char != " " {
-                buf_str += String(char)
-                if i + 1 < input_len {
-                    next_char = String(input[advance(input.startIndex, i+1)])
-                    if (contains(operators, next_char) || next_char == " ") {
-                        if contains(operators, buf_str) {
-                            stack.append(buf_str)
-                        }
-                        else {
-                            res.append(buf_str)
-                        }
-                        buf_str = ""
-                    }
+            // check if not EOL:   
+            if i + 1 < input_len {
+                next_char = String(input[advance(input.startIndex, i+1)])
+                if contains(numerals, next_char) {
+                    buf_str += String(char)
+                }
+                else {
+                    res.append(buf_str)
+                    buf_str = ""
                 }
             }
+            else {
+                println("-EOL char: \(char)")
+                res.append(buf_str)
+                buf_str = ""
+            }
+        }
+        // just debug
+        if countElements(buf_str) > 0 {
+            println("Buf now: \(buf_str)")
         }
         i += 1
     }
