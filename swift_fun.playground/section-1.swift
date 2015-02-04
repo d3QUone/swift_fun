@@ -178,7 +178,6 @@ func reverse_polish(input: String) -> [String]{
     let operators = ["+", "-", "*", "/", "(", ")"]
     let numerals = [".", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
     var res = [String]()
-    var stack = [String]()
     var i: Int = 0
     var char: Character
     var next_char: String = ""
@@ -186,10 +185,11 @@ func reverse_polish(input: String) -> [String]{
     // remove all spaces on the first run
     var input = input.stringByReplacingOccurrencesOfString(" ", withString: "", options: NSStringCompareOptions.LiteralSearch, range: nil)
     let input_len: Int = countElements(input)
+    // create reverse polish
     while i < input_len {
         char = input[advance(input.startIndex, i)]
         if contains(operators, String(char)) {
-            stack.append(String(char))
+            res.append(String(char)) //s
         }
         else if contains(numerals, String(char)) {
             // check if not EOL:   
@@ -204,25 +204,32 @@ func reverse_polish(input: String) -> [String]{
                 }
             }
             else {
-                println("-EOL char: \(char)")
                 res.append(buf_str + String(char))
                 buf_str = ""
             }
         }
         else {
             println("Incorrect char: \(char)")
-            return ["Incorrect char: \(char)", "\(countElements(res))", "\(countElements(stack))"]
+            return ["Incorrect char: \(char)", "\(countElements(res))", "-"]
         }
         i += 1
     }
+    // do calcs
+    var stack = [String]()
+    
+    
     println(res)
     println(stack)
     return ["not yet", "\(countElements(res))", "\(countElements(stack))"]
 }
 
 var res = [String]()
-var cases = [["115 + (3 + 41)/105 - 315 + 4*(2 - 3/4)", "9", "12", "_"],
-    ["11+(3+4)/10-31+4*(2-3/40)", "9", "12", "_"], ["1 +3*8- 10 -(-1)*5", "6", "8"]]
+var cases = [
+    ["115 + (3 + 41)/105 - 315 + 4*(2 - 3/4)", "9", "12", "_"],
+    ["11+(3+4)/10-31+4*(2-3/40)", "9", "12", "_"],
+    ["1 +3*8- 10 -(-1)*5", "6", "8"],
+    ["(8+2*5)/(1+3*2-4)", "7", "10"]
+]
 for one_case in cases {
     res = reverse_polish(one_case[0])
     if res[1] == one_case[1] && res[2] == one_case[2] {
@@ -236,6 +243,7 @@ for one_case in cases {
             println("failed \(one_case) on stack-size")
         }
     }
+    println("")
 }
         
 
