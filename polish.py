@@ -18,7 +18,7 @@ def test_stuff(name, function, cases):
 
 # --- get power ---
 def operator_power(o):
-    op = {"^": 4, "/": 3, "*": 3, "-": 2, "+": 2}
+    op = {"^": 4, "/": 3, "*": 3, "-": 2, "+": 2} #"-": 2, 
     try:
         return op[o]
     except:
@@ -26,6 +26,7 @@ def operator_power(o):
 
 operators = ["^", "*", "/", "+", "-"]
 functions = ["sin", "cos", "exp", "tan", "ln", "log"]
+numerals = [".", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
 
 #def do_aryphmetics(char):
 
@@ -93,15 +94,37 @@ cases2 = [[["11", "3", "4", "+", "10", "/", "+", "31", "-", "4", "2", "3", "40",
 #test_stuff("COUNT", count, cases2)
 
 
+# func to add zero if needed
+def help_with_zero(exp):
+    ooo = []
+    ooppend = ooo.append
+    b = ""
+    i = 0
+    n_o = 0
+    while i < len(exp):
+        char = exp[i]
+        if char in operators:
+            n_o += 1
+            if len(b) > 0:
+                ooppend(b)
+                b = ""
+        elif char in numerals:
+            b += char
+        i += 1
+        if i == len(exp):
+            ooppend(b)    
+    if len(ooo) - n_o == 0:
+        exp = "0" + exp
+    return exp
+
+
 # -------- create RPN -------- 
 def creplace(simple_input):
-    inp = simple_input # it definitly has no spaces
+    inp = help_with_zero(simple_input) # it definitly has no spaces    
     print "CREPLACE input eval:", inp
     proc = ""
     stack = ""
-    out = []
-    append = out.append
-    numerals = [".", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
+    out = []; append = out.append
     i = 0
     while i < len(inp):
         item = inp[i]
@@ -121,11 +144,8 @@ def creplace(simple_input):
                         a = int(operator_power(stack[j]))
                         b = int(operator_power(item))
                         if a >= b:
-                            #print "pop stack({0}): {1}".format(j, stack[j])
                             append(stack[j])
                             stack = stack[:j] + stack[j+1:]
-                        #else:
-                            #print "push to stack({0}): {1}".format(j, item) 
                     stack += item
                 except Exception as e:
                     print "operator-exception:", e, "item:", item
@@ -143,7 +163,8 @@ def creplace(simple_input):
 
 cases3 = [["4^2", "16"], ["41+57", "98"], ["2*4", "8"], ["9+0-3", "6"], ["2*3-1", "5"], ["12/3+1", "5"],
           ["12+3*41-33", "102"], ["40/8+10/10-2", "4"], ["2*3*4-5*6", "-6"], ["30-5/2+1", "28.5"], 
-          ["-1.0-3", "-4"], ["-2*4.1", "-8.2"]]
+          ["-1.0-3", "-4"], ["-2*4.1", "-8.2"], ["0-10-20", "-30"], ["100-500-100", "-500"],
+          ["-2*3*4+10-2.4/100", "-14.024"]]
 print "Doing tests of CREPLACE...."
 for case in cases3:
     buf = creplace(case[0])
@@ -208,4 +229,4 @@ def any_expression(exp):
 cases4 = [["1+(2+(3+4*(5+6)))", 50], ["(((1-2)-3)-4)-5", -13], ["(1 +3/(45* (33/44)-5))", 1.10434],
           ["30/(3+50)-11*(21-44/11)", -186.4339], ["(30/(3+50)-11*(21-44/11))", -186.4339],
           ["(30/(3+50)-11*(21-44/11)", "disb"]]
-test_stuff("MONSTER CALC", any_expression, cases4)
+#test_stuff("MONSTER CALC", any_expression, cases4)
