@@ -1,34 +1,8 @@
 import math
-
-# ---- test func ----
-def test_stuff(name, function, cases):
-    print "Doing tests of {0}...\n".format(name)
-    # case[i] = [eq, ans]
-    for case in cases:
-        res = function(case[0])
-        try:
-            if abs(float(res) - float(case[1])) < 0.001:
-                print "-OK: {0} = {1}".format(case[0], case[1])
-            else:
-                print "---Error: {0} != {1}".format(res, case[1])
-        except:
-            print "---Error:", res
-        print " "
-
-
-# --- get power ---
-def operator_power(o):
-    op = {"^": 4, "/": 3, "*": 3, "-": 2, "+": 2} #"-": 2, 
-    try:
-        return op[o]
-    except:
-        return None
-
 operators = ["^", "*", "/", "+", "-"]
 functions = ["sin", "cos", "exp", "tan", "ln", "log"]
 numerals = [".", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
 
-#def do_aryphmetics(char):
 
 # --- evaulate RPN - OK ---
 def count(a_list):
@@ -84,17 +58,7 @@ def count(a_list):
     return str(exp[0])
 
 
-cases1 = [["(11+(3+4)/10-31+4*(2-3/40))", ["11", "3", "4", "+", "10", "/", "+", "31", "-", "4", "2", "3", "40", "/", "-", "*", "+"]],
-         ["(1 +3*8- 10 -(-1)*5)", ["1", "3", "8", "*", "+", "10", "-", "5", "-1", "*", "-"]],
-         ["((8+2*5)/(1+3*2-4))", ["8", "2", "5", "*" "+", "1", "4", "2", "3", "*", "+", "-", "/"]]]
-
-cases2 = [[["11", "3", "4", "+", "10", "/", "+", "31", "-", "4", "2", "3", "40", "/", "-", "*", "+"], "-11.6"],
-          [["1", "3", "8", "*", "+", "10", "-", "5", "-1", "*", "-"], "20"],
-          [["8", "2", "5", "*", "+", "1", "4", "-", "2", "3", "*", "+", "/"], "6"]]
-#test_stuff("COUNT", count, cases2)
-
-
-# func to add zero if needed
+# func to add zero if needed - OK
 def help_with_zero(exp):
     ooo = []
     ooppend = ooo.append
@@ -118,7 +82,16 @@ def help_with_zero(exp):
     return exp
 
 
-# -------- create RPN -------- 
+# get power, OK
+def operator_power(o):
+    op = {"^": 4, "/": 3, "*": 3, "-": 2, "+": 2} #"-": 2, 
+    try:
+        return op[o]
+    except:
+        return None
+
+
+# -------- create RPN -------- OK
 def creplace(simple_input):
     inp = help_with_zero(simple_input) # it definitly has no spaces    
     print "CREPLACE input eval:", inp
@@ -161,25 +134,8 @@ def creplace(simple_input):
     return out
 
 
-cases3 = [["4^2", "16"], ["41+57", "98"], ["2*4", "8"], ["9+0-3", "6"], ["2*3-1", "5"], ["12/3+1", "5"],
-          ["12+3*41-33", "102"], ["40/8+10/10-2", "4"], ["2*3*4-5*6", "-6"], ["30-5/2+1", "28.5"], 
-          ["-1.0-3", "-4"], ["-2*4.1", "-8.2"], ["0-10-20", "-30"], ["100-500-100", "-500"],
-          ["-2*3*4+10-2.4/100", "-14.024"]]
-print "Doing tests of CREPLACE...."
-for case in cases3:
-    buf = creplace(case[0])
-    res = count(buf)
-    try:
-        if abs(float(res) - float(case[1])) < 0.001:
-            print "OK: {0} = {1}".format(case[0], case[1])
-        else:
-            print "Error: {0} != {1}".format(res, case[1])
-    except:
-        print "Error:", res, "; buf:", buf
-    print " "       
-
-
-def any_expression(exp):
+# ---- MAIN ---- OK
+def calc(exp):
     exp = exp.replace(" ", "")
     print "inp:", exp
     sub_exp = "" # a top-bracket exp 
@@ -226,7 +182,63 @@ def any_expression(exp):
         return "disb"
 
 
-cases4 = [["1+(2+(3+4*(5+6)))", 50], ["(((1-2)-3)-4)-5", -13], ["(1 +3/(45* (33/44)-5))", 1.10434],
-          ["30/(3+50)-11*(21-44/11)", -186.4339], ["(30/(3+50)-11*(21-44/11))", -186.4339],
-          ["(30/(3+50)-11*(21-44/11)", "disb"]]
-#test_stuff("MONSTER CALC", any_expression, cases4)
+
+# ---- test func ----
+def test_stuff(name, function, cases):
+    print "Doing tests of {0}...\n".format(name)
+    # case[i] = [eq, ans]
+    for case in cases:
+        res = function(case[0])
+        try:
+            if abs(float(res) - float(case[1])) < 0.001:
+                print "-OK: {0} = {1}".format(case[0], case[1])
+            else:
+                print "---Error: {0} != {1}".format(res, case[1])
+        except:
+            try:
+                if res == case[1]:
+                    print "-OK: {0} = {1}".format(case[0], case[1])
+                else:
+                    print "---Error: {0} != {1}".format(res, case[1])
+            except:
+                print "---Error:", res
+        print " "
+
+
+def test():
+    # test transorming into RPN
+    cases1 = [["11+3*9", ["11", "3", "9", "*", "+"]],
+              ["1*2*3-4*5*6", ["1", "2", "*", "3", "*", "4", "5", "*", "6", "*", "-"]],
+              ["-1-2", ["0", "1", "-", "2", "-"]]]
+    test_stuff("CREPLACE", creplace, cases1)
+
+    # test evaulation ready RPN
+    cases2 = [[["11", "3", "4", "+", "10", "/", "+", "31", "-", "4", "2", "3", "40", "/", "-", "*", "+"], "-11.6"],
+              [["1", "3", "8", "*", "+", "10", "-", "5", "-1", "*", "-"], "20"],
+              [["8", "2", "5", "*", "+", "1", "4", "-", "2", "3", "*", "+", "/"], "6"]]
+    test_stuff("COUNT", count, cases2)
+
+    # testing both function on simple cases
+    cases3 = [["4^2", "16"], ["41+57", "98"], ["2*4", "8"], ["9+0-3", "6"], ["2*3-1", "5"], ["12/3+1", "5"],
+              ["12+3*41-33", "102"], ["40/8+10/10-2", "4"], ["2*3*4-5*6", "-6"], ["30-5/2+1", "28.5"], 
+              ["-1.0-3", "-4"], ["-2*4.1", "-8.2"], ["0-10-20", "-30"], ["100-500-100", "-500"],
+              ["-2*3*4+10-2.4/100", "-14.024"]]
+
+    print "Doing tests of CREPLACE...."
+    for case in cases3:
+        buf = creplace(case[0])
+        res = count(buf)
+        try:
+            if abs(float(res) - float(case[1])) < 0.001:
+                print "OK: {0} = {1}".format(case[0], case[1])
+            else:
+                print "Error: {0} != {1}".format(res, case[1])
+        except:
+            print "Error:", res, "; buf:", buf
+        print " " 
+
+    # testing all together on any cases (but no functions yet)
+    cases4 = [["1+(2+(3+4*(5+6)))", 50], ["(((1-2)-3)-4)-5", -13], ["(1 +3/(45* (33/44)-5))", 1.10434],
+              ["30/(3+50)-11*(21-44/11)", -186.4339], ["(30/(3+50)-11*(21-44/11))", -186.4339],
+              ["(30/(3+50)-11*(21-44/11)", "disb"]]
+    test_stuff("MONSTER CALC", calc, cases4)
