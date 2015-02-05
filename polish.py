@@ -3,13 +3,16 @@ import math
 # ---- test func ----
 def test_stuff(name, function, cases):
     print "Doing tests of {0}...\n".format(name)
+    # case[i] = [eq, ans]
     for case in cases:
-        # case[i] = [eq, ans]
         res = function(case[0])
-        if abs(float(res) - float(case[1])) < 0.001:
-            print "-OK: {0} = {1}".format(case[0], case[1])
-        else:
-            print "---Error: {0} != {1}".format(res, case[1])
+        try:
+            if abs(float(res) - float(case[1])) < 0.001:
+                print "-OK: {0} = {1}".format(case[0], case[1])
+            else:
+                print "---Error: {0} != {1}".format(res, case[1])
+        except:
+            print "---Error:", res
         print " "
 
 
@@ -54,7 +57,6 @@ def count(a_list):
                 exp.pop(i-1)
                 i = 0
             except:
-                print "ex", item
                 return "io-e" #"Incorrect operator"
         elif item in functions:
             try:
@@ -75,7 +77,6 @@ def count(a_list):
                 exp.pop(i)
                 i = 0
             except:
-                print "ex", item
                 return "if-e" #"Incorrect function"
         else:
             i += 1
@@ -95,7 +96,7 @@ cases2 = [[["11", "3", "4", "+", "10", "/", "+", "31", "-", "4", "2", "3", "40",
 # -------- create RPN -------- 
 def creplace(simple_input):
     inp = simple_input # it definitly has no spaces
-    print "input eval:", inp
+    print "CREPLACE input eval:", inp
     proc = ""
     stack = ""
     out = []
@@ -114,8 +115,7 @@ def creplace(simple_input):
             if len(stack) == 0:
                 stack += item
             else:
-                try:
-                    # do it on the whole stack
+                try: # do it on the whole stack
                     for t in range(len(stack)):
                         j = len(stack) - 1 #top-stack-index
                         a = int(operator_power(stack[j]))
@@ -138,27 +138,29 @@ def creplace(simple_input):
     while i >= 0:
         append(stack[i])
         i -= 1
-    #print "out:", out
     return out
 
-'''
+
 cases3 = [["4^2", "16"], ["41+57", "98"], ["2*4", "8"], ["9+0-3", "6"], ["2*3-1", "5"], ["12/3+1", "5"],
-          ["12+3*41-33", "102"], ["40/8+10/10-2", "4"], ["2*3*4-5*6", "-6"], ["30-5/2+1", "28.5"]]
+          ["12+3*41-33", "102"], ["40/8+10/10-2", "4"], ["2*3*4-5*6", "-6"], ["30-5/2+1", "28.5"], 
+          ["-1.0-3", "-4"], ["-2*4.1", "-8.2"]]
 print "Doing tests of CREPLACE...."
 for case in cases3:
     buf = creplace(case[0])
     res = count(buf)
-    if abs(float(res) - float(case[1])) < 0.001:
-        print "OK: {0} = {1}".format(case[0], case[1])
-    else:
-        print "Error: {0} != {1}".format(res, case[1])
-    print " "
-'''        
+    try:
+        if abs(float(res) - float(case[1])) < 0.001:
+            print "OK: {0} = {1}".format(case[0], case[1])
+        else:
+            print "Error: {0} != {1}".format(res, case[1])
+    except:
+        print "Error:", res, "; buf:", buf
+    print " "       
 
 
 def any_expression(exp):
     exp = exp.replace(" ", "")
-    print "inp: " + exp + "; len =", len(exp), "..."
+    print "inp:", exp
     sub_exp = "" # a top-bracket exp 
     i = 0
     a = -1
@@ -181,10 +183,9 @@ def any_expression(exp):
                 # do calcs, replace by result:
                 sub_exp = exp[a+1:b] 
                 sub_RPN = creplace(sub_exp)
-                if sub_RPN in ["ii-e", "io-e", "if-e"]:
-                    return sub_RPN
-                else:
-                    sub_result = count(sub_RPN)
+                sub_result = count(sub_RPN)
+                if sub_result in ["ii-e", "io-e", "if-e"]:
+                    return sub_result
                 exp = exp[:a] + sub_result + exp[b+1:]
                 print "sub:", sub_exp, "| full:", exp, " | b =", brackets
                 i = -1 # cause +1 at the end -> i will be at the beginning 0
@@ -194,12 +195,17 @@ def any_expression(exp):
             else:
                 print "i = {0}, smth wrong".format(i) # wrong input as usual
         i += 1
-    sub_RPN = creplace(exp)
-    exp = count(sub_RPN)
-    print "finaly total simplify:", exp, ", brackets-balance:", brackets, "\n"
-    return brackets
-        
+    if brackets == 0:
+        sub_RPN = creplace(exp)
+        exp = count(sub_RPN)
+        print "finaly total simplify:", exp, ", bracket-balance - OK"
+        return exp
+    else:
+        print "bracket-disbalance:", brackets
+        return "disb"
 
-cases4 = [["1+(2+(3+4*(5+6)))", 0], ["(((1-2)-3)-4)-5", 0], ["(1 +3/(45* (33/44)-5))", 0], ["30/(3+50)-11*(21-44/11)", 0],
-          ["(30/(3+50)-11*(21-44/11))", 0], ["(30/(3+50)-11*(21-44/11)", -1]]
+
+cases4 = [["1+(2+(3+4*(5+6)))", 50], ["(((1-2)-3)-4)-5", -13], ["(1 +3/(45* (33/44)-5))", 1.10434],
+          ["30/(3+50)-11*(21-44/11)", -186.4339], ["(30/(3+50)-11*(21-44/11))", -186.4339],
+          ["(30/(3+50)-11*(21-44/11)", "disb"]]
 test_stuff("MONSTER CALC", any_expression, cases4)
