@@ -247,6 +247,3 @@ def test():
               ["(30/(3+50)-11*(21-44/11)", "disb"], [")-1*(3+4(", "disb"], ["))))", "disb"],
               [")-3-8", "disb"], ["-3-8)", "disb"]]
     test_stuff("MONSTER CALC", calc, cases4)
-
-
-test()
