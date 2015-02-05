@@ -92,9 +92,10 @@ def operator_power(o):
 
 
 # -------- create RPN -------- OK
-def creplace(simple_input):
-    inp = help_with_zero(simple_input) # it definitly has no spaces    
-    print "CREPLACE input eval:", inp
+def creplace(simple_input, silent = True):
+    inp = help_with_zero(simple_input) # it definitly has no spaces
+    if not silent:
+        print inp, "-> CREPLACE"
     proc = ""
     stack = ""
     out = []; append = out.append
@@ -121,7 +122,8 @@ def creplace(simple_input):
                             stack = stack[:j] + stack[j+1:]
                     stack += item
                 except Exception as e:
-                    print "operator-exception:", e, "item:", item
+                    if not silent:
+                        print "operator-exception:", e, "item:", item
                     return "oe"
         else:
             return "ee"
@@ -135,20 +137,21 @@ def creplace(simple_input):
 
 
 # ---- MAIN ---- OK
-def calc(exp):
+def calc(exp, silent = True):
     exp = exp.replace(" ", "")
-    print "inp:", exp
+    if not silent:
+        print "inp:", exp
     sub_exp = "" # a top-bracket exp 
     i = 0
     a = -1
     b = -1
     brackets = 0
-    # this must simplyfy input to no-brackets expression
-    while i < len(exp): #or len(exp) > 0
+    while i < len(exp): 
         if exp[0] == "(" and exp[len(exp)-1] == ")":
             exp = exp[1:-1]
             i = 0
-            print "updated exp to", exp # just not to waste time
+            if not silent:
+                print "updated exp to", exp # just not to waste time
         char = exp[i]
         if char == "(":
             a = i
@@ -164,30 +167,31 @@ def calc(exp):
                 if sub_result in ["ii-e", "io-e", "if-e"]:
                     return sub_result
                 exp = exp[:a] + sub_result + exp[b+1:]
-                print "sub:", sub_exp, "| full:", exp, " | b =", brackets
+                if not silent:
+                    print "sub:", sub_exp, "| full:", exp, " | b =", brackets
                 i = -1 # cause +1 at the end -> i will be at the beginning 0
                 brackets = 0 # cause starting from the beginning now
                 a = -1
                 b = -1
             else:
-                print "i = {0}, smth wrong".format(i) # wrong input as usual
+                return "disb"
         i += 1
     if brackets == 0:
         sub_RPN = creplace(exp)
         exp = count(sub_RPN)
-        print "finaly total simplify:", exp, ", bracket-balance - OK"
+        if not silent:
+            print "finaly total simplify:", exp, ", bracket-balance - OK"
         return exp
     else:
-        print "bracket-disbalance:", brackets
+        if not silent:
+            print "bracket-disbalance:", brackets
         return "disb"
-
 
 
 # ---- test func ----
 def test_stuff(name, function, cases):
     print "Doing tests of {0}...\n".format(name)
-    # case[i] = [eq, ans]
-    for case in cases:
+    for case in cases: # case[i] = [eq, ans]
         res = function(case[0])
         try:
             if abs(float(res) - float(case[1])) < 0.001:
@@ -226,7 +230,7 @@ def test():
 
     print "Doing tests of CREPLACE...."
     for case in cases3:
-        buf = creplace(case[0])
+        buf = creplace(case[0], silent = False)
         res = count(buf)
         try:
             if abs(float(res) - float(case[1])) < 0.001:
@@ -240,5 +244,9 @@ def test():
     # testing all together on any cases (but no functions yet)
     cases4 = [["1+(2+(3+4*(5+6)))", 50], ["(((1-2)-3)-4)-5", -13], ["(1 +3/(45* (33/44)-5))", 1.10434],
               ["30/(3+50)-11*(21-44/11)", -186.4339], ["(30/(3+50)-11*(21-44/11))", -186.4339],
-              ["(30/(3+50)-11*(21-44/11)", "disb"]]
+              ["(30/(3+50)-11*(21-44/11)", "disb"], [")-1*(3+4(", "disb"], ["))))", "disb"],
+              [")-3-8", "disb"], ["-3-8)", "disb"]]
     test_stuff("MONSTER CALC", calc, cases4)
+
+
+test()
